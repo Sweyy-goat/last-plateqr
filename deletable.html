@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LastPlate | Earth's Kin</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300;1,500&family=Inter:wght@200;400;600&family=Noto+Serif+Malayalam:wght@300&family=Noto+Serif+Devanagari:wght@300&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #080908;
+            --earth-glow: #7a8d6e;
+            --text-main: #f0f0f0;
+            --text-dim: #777;
+            --ease-elegant: cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        @media (min-width: 768px) {
+            body { padding: 40px 60px; cursor: none; }
+        }
+
+        .grain {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: url("https://upload.wikimedia.org/wikipedia/commons/7/76/1k_Noise_Texture.png");
+            opacity: 0.04;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        /* --- THE MOVING LIGHT --- */
+        #cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 600px; 
+            height: 600px;
+            /* Increased size for a softer, more atmospheric bleed */
+            background: radial-gradient(circle, rgba(122, 141, 110, 0.15) 0%, rgba(122, 141, 110, 0.05) 30%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            will-change: transform;
+            transform: translate(-50%, -50%); /* Center the light on the coordinates */
+        }
+
+        /* Hide moving light on touch devices to prevent "sticking" */
+        @media (hover: none) {
+            #cursor { display: none; }
+        }
+
+        header { 
+            display: flex; 
+            flex-direction: column;
+            gap: 10px;
+            justify-content: space-between; 
+            align-items: center; 
+            z-index: 10; 
+        }
+
+        @media (min-width: 768px) {
+            header { flex-direction: row; }
+        }
+
+        .recognition { font-size: 9px; letter-spacing: 4px; text-transform: uppercase; color: var(--earth-glow); font-weight: 600; }
+        .logo { font-weight: 200; letter-spacing: 14px; font-size: 13px; }
+
+        .main-content { 
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center; 
+            max-width: 1100px; 
+            margin: 0 auto; 
+            z-index: 10; 
+            width: 100%;
+        }
+
+        .philosophy-container {
+            min-height: 250px; /* Prevents layout jump when switching languages */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            perspective: 1000px;
+            width: 100%;
+        }
+
+        .philosophy {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: clamp(38px, 8vw, 90px);
+            line-height: 1.1;
+            font-weight: 300;
+        }
+
+        .char { display: inline-block; will-change: transform, opacity, filter; }
+
+        .lang-ml { font-family: 'Noto Serif Malayalam', serif; font-size: clamp(32px, 7vw, 80px); }
+        .lang-hi { font-family: 'Noto Serif Devanagari', serif; font-size: clamp(36px, 8vw, 85px); }
+
+        .emotional-hook {
+            font-size: clamp(13px, 2vw, 15px);
+            line-height: 2;
+            color: var(--text-dim);
+            max-width: 650px;
+            margin: 30px auto;
+            font-weight: 200;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        .emotional-hook span { color: var(--earth-glow); font-style: italic; }
+
+        .join-trigger {
+            display: inline-block;
+            padding: 20px 60px;
+            background: transparent;
+            color: white;
+            text-decoration: none;
+            font-size: clamp(8px, 1.5vw, 10px);
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.6s var(--ease-elegant);
+            position: relative;
+            z-index: 20;
+        }
+
+        @media (min-width: 768px) {
+            .join-trigger { padding: 24px 80px; }
+        }
+
+        .join-trigger:hover {
+            letter-spacing: 10px;
+            background: #fff;
+            color: #000;
+        }
+
+        footer { 
+            display: flex; 
+            flex-direction: column;
+            gap: 15px;
+            justify-content: space-between; 
+            align-items: center; 
+            font-size: 9px; 
+            letter-spacing: 3px; 
+            color: #444; 
+            padding-top: 20px;
+            z-index: 10;
+        }
+
+        @media (min-width: 768px) {
+            footer { flex-direction: row; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="grain"></div>
+    <div id="cursor"></div>
+
+    <header>
+        <div class="recognition">Welcome, Seeker of Change</div>
+        <div class="logo">LASTPLATE</div>
+    </header>
+
+    <main class="main-content">
+        <div class="philosophy-container">
+            <h1 id="headline" class="philosophy"></h1>
+        </div>
+        
+        <p class="emotional-hook" id="hook">
+            We see you. Every discarded meal is a <span>broken promise</span> to the soil. We return respect to the hands that grew it and the land that gave it life. You understand that every grain is a gift; together, we heal the circle.
+        </p>
+        
+        <div id="btn-wrap" style="opacity: 0;">
+            <a href="#join" class="join-trigger">Become Part of the Circle</a>
+        </div>
+    </main>
+
+    <footer>
+        <div>SINCE THE FIRST SEED</div>
+        <div>2026 — PRESERVING THE FUTURE</div>
+    </footer>
+
+    <script>
+        const phrases = [
+            { text: "Earth ain’t ours, we are Earth’s.", class: "" },
+            { text: "ഭൂമി നമ്മുടേതല്ല, നാം ഭൂമിയുടേതാണ്.", class: "lang-ml" },
+            { text: "धरती हमारी नहीं है, हम धरती के हैं।", class: "lang-hi" }
+        ];
+
+        let currentIndex = 0;
+        const headline = document.getElementById('headline');
+
+        // --- RESTORED PHYSICS CURSOR ---
+        const cursor = document.getElementById('cursor');
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let ballX = mouseX;
+        let ballY = mouseY;
+        const speed = 0.08; 
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function animateCursor() {
+            // Lerp logic for the "liquid" feel
+            let distX = mouseX - ballX;
+            let distY = mouseY - ballY;
+            ballX += distX * speed;
+            ballY += distY * speed;
+            
+            // Translate centered on the mouse
+            cursor.style.transform = `translate(${ballX - 300}px, ${ballY - 300}px)`;
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        // --- TEXT LOGIC ---
+        function splitGraphemes(text) {
+            if (window.Intl && Intl.Segmenter) {
+                const segmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
+                return [...segmenter.segment(text)].map(s => s.segment);
+            }
+            return Array.from(text);
+        }
+
+        function renderPhrase(index) {
+            headline.innerHTML = '';
+            const phrase = phrases[index];
+            headline.className = 'philosophy ' + phrase.class;
+
+            const chars = splitGraphemes(phrase.text);
+            chars.forEach((char) => {
+                const span = document.createElement('span');
+                span.className = 'char';
+                span.innerHTML = char === ' ' ? '&nbsp;' : char;
+                headline.appendChild(span);
+            });
+
+            gsap.fromTo(".char", 
+                { opacity: 0, y: 30, rotateX: -45, filter: "blur(10px)" },
+                { 
+                    opacity: 1, y: 0, rotateX: 0, filter: "blur(0px)",
+                    duration: 1.5, stagger: 0.04, ease: "power4.out" 
+                }
+            );
+        }
+
+        function cycleText() {
+            gsap.to(".char", {
+                opacity: 0, y: -20, rotateX: 30, filter: "blur(10px)",
+                duration: 1.2, stagger: 0.02, ease: "power4.inOut",
+                onComplete: () => {
+                    currentIndex = (currentIndex + 1) % phrases.length;
+                    renderPhrase(currentIndex);
+                }
+            });
+        }
+
+        window.addEventListener('load', () => {
+            renderPhrase(0);
+            gsap.to("#hook", { opacity: 1, y: 0, duration: 2, delay: 1, ease: "power2.out" });
+            gsap.to("#btn-wrap", { opacity: 1, duration: 2, delay: 1.5, ease: "power2.out" });
+            setInterval(cycleText, 6000);
+        });
+    </script>
+</body>
+</html>
