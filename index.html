@@ -3,15 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LastPlate | Earth's Kin</title>
+    <title>LastPlate | The Sacred Surplus</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300;1,500&family=Inter:wght@200;400;600&family=Noto+Serif+Malayalam:wght@300&family=Noto+Serif+Devanagari:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300;1,500;1,600&family=Inter:wght@100;300;600&family=Noto+Serif+Malayalam:wght@300&family=Noto+Serif+Devanagari:wght@300&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #080908;
-            --earth-glow: #7a8d6e;
-            --text-main: #f0f0f0;
-            --text-dim: #777;
+            --bg: #0a0b0a;
+            --earth-glow: #889e7a;
+            --earth-dark: #2d3628;
+            --text-main: #f4f4f2;
+            --text-dim: #a0a09e;
+            --gold-haze: rgba(194, 178, 128, 0.12);
             --ease-elegant: cubic-bezier(0.23, 1, 0.32, 1);
         }
 
@@ -24,181 +26,232 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            padding: 30px;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
         }
 
-        @media (min-width: 768px) {
-            body { padding: 40px 60px; cursor: none; }
-        }
-
+        /* --- THE ATMOSPHERE --- */
         .grain {
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background-image: url("https://upload.wikimedia.org/wikipedia/commons/7/76/1k_Noise_Texture.png");
-            opacity: 0.04;
-            pointer-events: none;
-            z-index: 100;
+            opacity: 0.04; pointer-events: none; z-index: 100;
         }
 
-        /* --- THE MOVING LIGHT --- */
+        .vignette {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.9) 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
         #cursor {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 600px; 
-            height: 600px;
-            /* Increased size for a softer, more atmospheric bleed */
-            background: radial-gradient(circle, rgba(122, 141, 110, 0.15) 0%, rgba(122, 141, 110, 0.05) 30%, rgba(0,0,0,0) 70%);
+            top: 0; left: 0;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, var(--gold-haze) 0%, transparent 70%);
             border-radius: 50%;
             pointer-events: none;
             z-index: 0;
             will-change: transform;
-            transform: translate(-50%, -50%); /* Center the light on the coordinates */
+            display: none; /* Hidden by default for performance, shown on desktop */
         }
 
-        /* Hide moving light on touch devices to prevent "sticking" */
-        @media (hover: none) {
-            #cursor { display: none; }
+        /* --- NAVIGATION --- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 30px;
+            z-index: 100;
+            position: relative;
         }
 
-        header { 
-            display: flex; 
-            flex-direction: column;
-            gap: 10px;
-            justify-content: space-between; 
-            align-items: center; 
-            z-index: 10; 
+        .logo { 
+            font-weight: 100; 
+            letter-spacing: 12px; 
+            font-size: 12px; 
+            text-indent: 12px;
         }
 
-        @media (min-width: 768px) {
-            header { flex-direction: row; }
+        .status-tag {
+            font-size: 8px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            border: 1px solid var(--earth-dark);
+            padding: 6px 12px;
+            border-radius: 20px;
+            color: var(--earth-glow);
         }
 
-        .recognition { font-size: 9px; letter-spacing: 4px; text-transform: uppercase; color: var(--earth-glow); font-weight: 600; }
-        .logo { font-weight: 200; letter-spacing: 14px; font-size: 13px; }
-
-        .main-content { 
+        /* --- MAIN CONTENT --- */
+        .hero {
             flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            text-align: center; 
-            max-width: 1100px; 
-            margin: 0 auto; 
-            z-index: 10; 
-            width: 100%;
+            text-align: center;
+            padding: 20px;
+            z-index: 10;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pre-title {
+            font-size: 9px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin-bottom: 20px;
+            opacity: 0;
         }
 
         .philosophy-container {
-            min-height: 250px; /* Prevents layout jump when switching languages */
+            min-height: 160px;
+            width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-            perspective: 1000px;
-            width: 100%;
         }
 
         .philosophy {
             font-family: 'Cormorant Garamond', serif;
             font-style: italic;
-            font-size: clamp(38px, 8vw, 90px);
+            font-size: clamp(38px, 10vw, 100px);
             line-height: 1.1;
             font-weight: 300;
         }
 
-        .char { display: inline-block; will-change: transform, opacity, filter; }
+        .char { display: inline-block; will-change: transform, opacity; }
 
-        .lang-ml { font-family: 'Noto Serif Malayalam', serif; font-size: clamp(32px, 7vw, 80px); }
-        .lang-hi { font-family: 'Noto Serif Devanagari', serif; font-size: clamp(36px, 8vw, 85px); }
+        .lang-ml { font-family: 'Noto Serif Malayalam', serif; font-size: clamp(32px, 8vw, 65px); }
+        .lang-hi { font-family: 'Noto Serif Devanagari', serif; font-size: clamp(34px, 9vw, 90px); }
 
-        .emotional-hook {
-            font-size: clamp(13px, 2vw, 15px);
-            line-height: 2;
+        .mission-statement {
+            font-weight: 300;
+            font-size: clamp(15px, 4vw, 17px);
+            line-height: 1.7;
             color: var(--text-dim);
-            max-width: 650px;
+            max-width: 550px;
             margin: 30px auto;
-            font-weight: 200;
+            opacity: 0;
+            transform: translateY(15px);
+        }
+
+        .mission-statement span { color: var(--text-main); font-weight: 500; }
+
+        /* --- CALL TO ACTION --- */
+        .cta-group {
+            margin-top: 10px;
             opacity: 0;
             transform: translateY(10px);
         }
 
-        .emotional-hook span { color: var(--earth-glow); font-style: italic; }
-
-        .join-trigger {
+        .btn-primary {
+            position: relative;
             display: inline-block;
-            padding: 20px 60px;
-            background: transparent;
+            padding: 20px 50px;
+            background: rgba(255, 255, 255, 0.03);
             color: white;
             text-decoration: none;
-            font-size: clamp(8px, 1.5vw, 10px);
-            letter-spacing: 8px;
+            font-size: 11px;
+            letter-spacing: 5px;
             text-transform: uppercase;
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: all 0.6s var(--ease-elegant);
-            position: relative;
-            z-index: 20;
+            border: 1px solid rgba(255,255,255,0.2);
+            overflow: hidden;
+            transition: all 0.4s var(--ease-elegant);
+            box-shadow: 0 0 20px rgba(136, 158, 122, 0.05);
         }
 
-        @media (min-width: 768px) {
-            .join-trigger { padding: 24px 80px; }
+        .btn-primary:hover, .btn-primary:active {
+            border-color: var(--earth-glow);
+            background: rgba(136, 158, 122, 0.05);
+            box-shadow: 0 0 30px rgba(136, 158, 122, 0.15);
         }
 
-        .join-trigger:hover {
-            letter-spacing: 10px;
-            background: #fff;
-            color: #000;
+        .btn-fill {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--text-main);
+            transform: translateY(101%);
+            transition: transform 0.5s var(--ease-elegant);
+            z-index: -1;
         }
 
-        footer { 
-            display: flex; 
-            flex-direction: column;
-            gap: 15px;
-            justify-content: space-between; 
-            align-items: center; 
-            font-size: 9px; 
-            letter-spacing: 3px; 
-            color: #444; 
-            padding-top: 20px;
+        .btn-primary:hover .btn-fill { transform: translateY(0); }
+        .btn-primary:hover { color: #000; }
+
+        /* --- FOOTER --- */
+        footer {
+            padding: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
             z-index: 10;
         }
 
-        @media (min-width: 768px) {
-            footer { flex-direction: row; }
+        .stat-box { text-align: left; }
+        .stat-label { font-size: 8px; letter-spacing: 2px; color: var(--text-dim); margin-bottom: 5px; }
+        .stat-value { font-size: 16px; font-family: 'Cormorant Garamond'; font-style: italic; color: var(--earth-glow); }
+
+        /* --- RESPONSIVE OPTIMIZATIONS --- */
+        @media (min-width: 1024px) {
+            #cursor { display: block; }
+            nav { padding: 40px 60px; }
+            footer { padding: 40px 60px; }
+            .logo { font-size: 14px; letter-spacing: 18px; }
+            .btn-primary { padding: 25px 80px; }
+        }
+
+        @media (max-width: 480px) {
+            .hero { justify-content: flex-start; padding-top: 15vh; }
+            .philosophy-container { min-height: 140px; }
+            .mission-statement { font-size: 14px; margin-bottom: 40px; }
+            footer { flex-direction: column; align-items: center; gap: 20px; text-align: center; }
+            .stat-box { text-align: center !important; }
         }
     </style>
 </head>
 <body>
 
     <div class="grain"></div>
+    <div class="vignette"></div>
     <div id="cursor"></div>
 
-    <header>
-        <div class="recognition">Welcome, Seeker of Change</div>
+    <nav>
         <div class="logo">LASTPLATE</div>
-    </header>
+        <div class="status-tag">Live 2026</div>
+    </nav>
 
-    <main class="main-content">
+    <main class="hero">
+        <div class="pre-title" id="preTitle">A culinary pact with nature</div>
         <div class="philosophy-container">
             <h1 id="headline" class="philosophy"></h1>
         </div>
         
-        <p class="emotional-hook" id="hook">
-            We see you. Every discarded meal is a <span>broken promise</span> to the soil. We return respect to the hands that grew it and the land that gave it life. You understand that every grain is a gift; together, we heal the circle.
+        <p class="mission-statement" id="mission">
+            The world’s finest flavors shouldn’t end at midnight. <span>LastPlate</span> rescues premium surplus from top kitchens. We don't just reduce waste; we honor the <span>craft</span>.
         </p>
         
-        <div id="btn-wrap" style="opacity: 0;">
-            <a href="www.lastplate.in" class="join-trigger">Become Part of the Circle</a>
+        <div class="cta-group" id="cta">
+            <a href="#reserve" class="btn-primary">
+                <span class="btn-fill"></span>
+                Reserve Your Plate
+            </a>
         </div>
     </main>
 
     <footer>
-        <div>SINCE THE FIRST SEED</div>
-        <div>2026 — PRESERVING THE FUTURE</div>
+        <div class="stat-box">
+            <div class="stat-label">RESCUED TODAY</div>
+            <div class="stat-value">1,402 Kilos</div>
+        </div>
+        <div class="stat-box" style="text-align: right;">
+            <div class="stat-label">JOIN THE CIRCLE</div>
+            <div class="stat-value">Our Earth's Kin</div>
+        </div>
     </footer>
 
     <script>
@@ -211,48 +264,34 @@
         let currentIndex = 0;
         const headline = document.getElementById('headline');
 
-        // --- RESTORED PHYSICS CURSOR ---
+        // Physics Cursor (Only if visible)
         const cursor = document.getElementById('cursor');
-        let mouseX = window.innerWidth / 2;
-        let mouseY = window.innerHeight / 2;
-        let ballX = mouseX;
-        let ballY = mouseY;
-        const speed = 0.08; 
+        let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+        let ballX = mouseX, ballY = mouseY;
 
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
+        document.addEventListener('mousemove', e => { 
+            mouseX = e.clientX; 
+            mouseY = e.clientY; 
         });
 
         function animateCursor() {
-            // Lerp logic for the "liquid" feel
-            let distX = mouseX - ballX;
-            let distY = mouseY - ballY;
-            ballX += distX * speed;
-            ballY += distY * speed;
-            
-            // Translate centered on the mouse
-            cursor.style.transform = `translate(${ballX - 300}px, ${ballY - 300}px)`;
+            ballX += (mouseX - ballX) * 0.08;
+            ballY += (mouseY - ballY) * 0.08;
+            cursor.style.transform = `translate3d(${ballX - 300}px, ${ballY - 300}px, 0)`;
             requestAnimationFrame(animateCursor);
         }
         animateCursor();
-
-        // --- TEXT LOGIC ---
-        function splitGraphemes(text) {
-            if (window.Intl && Intl.Segmenter) {
-                const segmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
-                return [...segmenter.segment(text)].map(s => s.segment);
-            }
-            return Array.from(text);
-        }
 
         function renderPhrase(index) {
             headline.innerHTML = '';
             const phrase = phrases[index];
             headline.className = 'philosophy ' + phrase.class;
 
-            const chars = splitGraphemes(phrase.text);
-            chars.forEach((char) => {
+            const segments = (window.Intl && Intl.Segmenter) 
+                ? [...new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(phrase.text)].map(s => s.segment)
+                : phrase.text.split('');
+
+            segments.forEach(char => {
                 const span = document.createElement('span');
                 span.className = 'char';
                 span.innerHTML = char === ' ' ? '&nbsp;' : char;
@@ -260,18 +299,14 @@
             });
 
             gsap.fromTo(".char", 
-                { opacity: 0, y: 30, rotateX: -45, filter: "blur(10px)" },
-                { 
-                    opacity: 1, y: 0, rotateX: 0, filter: "blur(0px)",
-                    duration: 1.5, stagger: 0.04, ease: "power4.out" 
-                }
+                { opacity: 0, y: 30, rotateX: -45, filter: "blur(8px)" },
+                { opacity: 1, y: 0, rotateX: 0, filter: "blur(0px)", duration: 1.2, stagger: 0.04, ease: "power3.out" }
             );
         }
 
         function cycleText() {
             gsap.to(".char", {
-                opacity: 0, y: -20, rotateX: 30, filter: "blur(10px)",
-                duration: 1.2, stagger: 0.02, ease: "power4.inOut",
+                opacity: 0, y: -20, filter: "blur(8px)", duration: 1, stagger: 0.02, ease: "power3.inOut",
                 onComplete: () => {
                     currentIndex = (currentIndex + 1) % phrases.length;
                     renderPhrase(currentIndex);
@@ -281,11 +316,13 @@
 
         window.addEventListener('load', () => {
             renderPhrase(0);
-            gsap.to("#hook", { opacity: 1, y: 0, duration: 2, delay: 1, ease: "power2.out" });
-            gsap.to("#btn-wrap", { opacity: 1, duration: 2, delay: 1.5, ease: "power2.out" });
+            const tl = gsap.timeline();
+            tl.to("#preTitle", { opacity: 1, duration: 1.5, delay: 0.5 })
+              .to("#mission", { opacity: 1, y: 0, duration: 1.2 }, "-=0.8")
+              .to("#cta", { opacity: 1, y: 0, duration: 1, ease: "back.out(1.7)" }, "-=0.5");
+            
             setInterval(cycleText, 6000);
         });
     </script>
 </body>
 </html>
-
